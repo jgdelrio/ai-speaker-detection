@@ -13,3 +13,6 @@ settings = Settings()
 
 SERVICE_NAME = "AI Speaker Detection Service"
 SERVICE_VERSION = "1.0.0"
+
+SERVICE_HOST = "0.0.0.0"
+SERVICE_PORT = 8080
