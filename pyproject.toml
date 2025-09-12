@@ -1,28 +1,102 @@
 [project]
 name = "ai-speaker-detection"
 version = "1.0.0"
-description = "A FastAPI service for speaker identification"
+description = "AI speaker detection service that identifies different speakers in audio files and updates transcription information"
 readme = "README.md"
 requires-python = ">=3.8"
+authors = [
+    {name = "Jose del Rio", email = "jgriosanz@gmail.com"},
+]
 dependencies = [
-    "fastapi==0.104.1",
-    "librosa>=0.11.0",
-    "numpy>=1.21.0",
-    "scikit-learn>=1.3.2",
-    "speechbrain>=1.0.3",
-    "torch>=1.9.0",
-    "torchaudio>=0.9.0",
-    "uvicorn[standard]==0.24.0",
+    # Web framework and ASGI
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "mangum>=0.17.0",
+
+    # AWS Lambda runtime interface
+    "awslambdaric>=2.0.0",
+
+    # Machine Learning and Audio Processing
+    "torch>=2.0.0",
+    "torchaudio>=2.0.0",
+    "speechbrain>=1.0.0",
+    "numpy>=1.24.0",
+    "scipy>=1.11.0",
+
+    # Data processing and utilities
+    "pydantic>=2.0.0",
+    "python-multipart>=0.0.6",
 ]
 
-[dependency-groups]
+
+[project.optional-dependencies]
 dev = [
-    "black>=24.8.0",
-    "flake8>=5.0.4",
-    "pytest>=8.3.5",
-    "pytest-asyncio>=0.24.0",
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "httpx>=0.25.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "flake8>=6.0.0",
+    "mypy>=1.5.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/your-org/ai-speaker-detection"
+Repository = "https://github.com/your-org/ai-speaker-detection.git"
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+known_first_party = ["app"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = [
+    "speechbrain.*",
+    "torch.*",
+    "torchaudio.*",
+    "mangum.*",
+]
+ignore_missing_imports = true
 
 [tool.black]
 line-length = 88
 target-version = ['py38']
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+

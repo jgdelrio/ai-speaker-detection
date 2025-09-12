@@ -1,0 +1,62 @@
+# Virtual environment
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+README.md
+*.md
+LICENSE
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+tests/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Development and test data (exclude from Lambda)
+media/
+tmp_model/
+speaker_detection_test_results.json
+run_detect.py
+
+# CI/CD and tooling
+.github/
+.qodo/
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# Logs
+*.log
+logs/
