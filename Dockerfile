@@ -12,10 +12,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 # Copy project configuration
 COPY pyproject.toml ./
-
-# Create virtual environment and install dependencies
-RUN uv venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
+RUN uv sync --no-dev
 
 # Install PyTorch CPU-only first (largest dependency) - use latest version compatible with Python 3.12
 RUN uv pip install --no-cache \
@@ -25,35 +22,35 @@ RUN uv pip install --no-cache \
     torch>=2.2.0 torchaudio>=2.2.0
 
 # Install remaining dependencies with compatible versions
-RUN uv pip install --no-cache \
-    fastapi>=0.104.0 \
-    uvicorn>=0.24.0 \
-    mangum>=0.17.0 \
-    awslambdaric>=2.0.0 \
-    speechbrain>=1.0.0 \
-    numpy>=1.24.0 \
-    scipy>=1.11.0 \
-    pydantic>=2.5.0 \
-    python-multipart>=0.0.6
+#RUN uv pip install --no-cache \
+#    fastapi>=0.104.0 \
+#    uvicorn>=0.24.0 \
+#    mangum>=0.17.0 \
+#    awslambdaric>=2.0.0 \
+#    speechbrain>=1.0.0 \
+#    numpy>=1.24.0 \
+#    scipy>=1.11.0 \
+#    pydantic>=2.5.0 \
+#    python-multipart>=0.0.6
 
 # Clean up unnecessary files in virtual environment
-RUN find /opt/venv -name "*.pyc" -delete && \
-    find /opt/venv -name "__pycache__" -type d -exec rm -rf {} + && \
-    find /opt/venv -name "*.pyo" -delete && \
-    find /opt/venv -name "tests" -type d -exec rm -rf {} + && \
-    find /opt/venv -name "test" -type d -exec rm -rf {} + && \
-    rm -rf /opt/venv/lib/python*/site-packages/torch/test && \
-    rm -rf /opt/venv/lib/python*/site-packages/torchaudio/test*
+RUN find /.venv -name "*.pyc" -delete && \
+    find /.venv -name "__pycache__" -type d -exec rm -rf {} + && \
+    find /.venv -name "*.pyo" -delete && \
+    find /.venv -name "tests" -type d -exec rm -rf {} + && \
+    find /.venv -name "test" -type d -exec rm -rf {} + && \
+    rm -rf /.venv/lib/python*/site-packages/torch/test && \
+    rm -rf /.venv/lib/python*/site-packages/torchaudio/test*
 
 # Stage 2: Runtime image
 FROM public.ecr.aws/lambda/python:3.12
 
 # Copy only the virtual environment from builder
-COPY --from=builder /opt/venv /opt/venv
+COPY --from=builder /.venv /var/task/.venv
 
 # Set PATH to use virtual environment
-ENV PATH="/opt/venv/bin:$PATH"
-ENV PYTHONPATH="/opt/venv/lib/python3.12/site-packages:$PYTHONPATH"
+ENV PATH="/var/task/.venv/bin:$PATH"
+ENV PYTHONPATH="/var/task/.venv/lib/python3.12/site-packages:${PYTHONPATH}"
 
 # Copy only essential application code
 COPY app/ ${LAMBDA_TASK_ROOT}/app/
